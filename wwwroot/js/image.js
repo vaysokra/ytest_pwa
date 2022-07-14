@@ -28,7 +28,7 @@ window.setImage = async (imageElementId, imageStream) => {
     document.getElementById(imageElementId).src = url;
 
     //URL.revokeObjectURL(url);
-    const request = indexedDB.open('CRM', 1);
+    const request = indexedDB.open('CRM', 21);
 
     request.onerror = (event) => {
         console.error(`Database error: ${event.target.errorCode}`);
@@ -39,8 +39,9 @@ window.setImage = async (imageElementId, imageStream) => {
         const db = event.target.result;
 
         insertImage(db, {
-            image: blob,
-            url: url,
+            email: blob,
+            firstName: 'John',
+            lastName: 'Doe'
         });
     };
     // create the Contacts object store and indexes
@@ -53,9 +54,9 @@ window.setImage = async (imageElementId, imageStream) => {
             autoIncrement: true
         });
 
-        // // create an index on the email property
-        // let index = store.createIndex('email', 'email', {
-        //     unique: true
-        // });
+        // create an index on the email property
+        let index = store.createIndex('email', 'email', {
+            unique: true
+        });
     };
-  }
+}

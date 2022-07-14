@@ -47,7 +47,7 @@ function insertContact(db, contact) {
     };
 }
 window.DB = async () => {
-    const request = indexedDB.open('CRM', 1);
+    const request = indexedDB.open('CRM', 21);
 
     request.onerror = (event) => {
         console.error(`Database error: ${event.target.errorCode}`);
