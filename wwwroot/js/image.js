@@ -60,3 +60,42 @@ window.setImage = async (imageElementId, imageStream) => {
         });
     };
 }
+
+//////////////////////////////////////////////////////////////////////////
+function getImageById(db,imgID, id) {
+    const txn = db.transaction('Images', 'readonly');
+    const store = txn.objectStore('Images');
+
+    let query = store.get(id);
+
+    query.onsuccess = (event) => {
+        if (!event.target.result) {
+            console.log(`The contact with ${id} not found`);
+        } else {
+            console.table(event.target.result.firstName);
+            const url = URL.createObjectURL(event.target.result.email);
+            document.getElementById(imgID).src = url;
+        }
+    };
+
+    query.onerror = (event) => {
+        console.log(event.target.errorCode);
+    }
+
+    txn.oncomplete = function () {
+        db.close();
+    };
+};
+window.findImage = async (imgID) => {
+    const request = indexedDB.open('CRM', 21);
+
+    request.onerror = (event) => {
+        console.error(`Database error: ${event.target.errorCode}`);
+    };
+
+    request.onsuccess = (event) => {
+        // add implementation here
+        const db = event.target.result;
+        getImageById(db,imgID, 9);
+    };
+}

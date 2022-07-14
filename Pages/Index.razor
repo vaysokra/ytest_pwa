@@ -17,12 +17,17 @@
 <button @onclick="FindDB">
     Find DB
 </button>
-
+<button @onclick="FindImage">
+    Find image
+</button>
+<p>
+    <img id="imageRead"/>
+</p>
 @code {
     private async Task<Stream> GetImageStreamAsync()
     {
         return await Http.GetStreamAsync(
-            "https://avatars.githubusercontent.com/u/9141961");
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Argynnis_paphia_Mitterbach_01.jpg/750px-Argynnis_paphia_Mitterbach_01.jpg");
     }
 
     private async Task SetImageAsync()
@@ -38,5 +43,9 @@
     private async Task FindDB()
     {
         await JS.InvokeVoidAsync("findDB");
+    }
+    private async Task FindImage()
+    {
+        await JS.InvokeVoidAsync("findImage","imageRead");
     }
 }
