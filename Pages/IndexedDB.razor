@@ -1,0 +1,62 @@
+@page "/indexedDB"
+@inject HttpClient Http
+@inject IJSRuntime JS
+
+<h1>Stream Image Data Example</h1>
+<p>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Argynnis_paphia_Mitterbach_01.jpg/750px-Argynnis_paphia_Mitterbach_01.jpg" 
+    id="imageViewZoom"/>
+</p>
+<p>
+    <img id="image" />
+</p>
+
+@* <button @onclick="SetImageAsync">
+    Set Image
+</button>
+<button @onclick="SetDB">
+    Set DB
+</button>
+<button @onclick="FindDB">
+    Find DB
+</button>
+<button @onclick="FindImage">
+    Find image
+</button> *@
+<p>
+    <button @onclick="ViewImage">
+        View image
+    </button>
+</p>
+<p>
+    <img id="imageRead"/>
+</p>
+@code {
+    private async Task<Stream> GetImageStreamAsync()
+    {
+        return await Http.GetStreamAsync(
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Argynnis_paphia_Mitterbach_01.jpg/750px-Argynnis_paphia_Mitterbach_01.jpg");
+    }
+
+    private async Task SetImageAsync()
+    {
+        var imageStream = await GetImageStreamAsync();
+        var dotnetImageStream = new DotNetStreamReference(imageStream);
+        await JS.InvokeVoidAsync("setImage", "image", dotnetImageStream);
+    }
+    private async Task SetDB()
+    {
+        await JS.InvokeVoidAsync("DB");
+    }
+    private async Task FindDB()
+    {
+        await JS.InvokeVoidAsync("findDB");
+    }
+    private async Task FindImage()
+    {
+        await JS.InvokeVoidAsync("findImage","imageRead");
+    }
+    private async Task ViewImage(){
+        await JS.InvokeVoidAsync("ViewImage");
+    }
+}
