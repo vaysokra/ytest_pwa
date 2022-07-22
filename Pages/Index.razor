@@ -1,74 +1,24 @@
 ﻿@page "/"
-@using Tewr.Blazor.FileReader
-@inject HttpClient Http
+@using Microsoft.AspNetCore.Components.Forms
+@using System.IO
+@inject ILogger<Index> Logger
 @inject IJSRuntime JS
-@inject IFileReaderService fileReaderService;
+
+
 <p>
     <img id="image" />
 </p>
+<InputFile OnChange="@LoadFiles" accept="image/*" capture />
 
-Users can select from galery or capture
-<br />
-Camera opens straight away
-<input @ref="ReferenceToInputControl" @onclick="OnInputFileChange" type="file" accept="image/*" capture>
-<button @onclick="OnInputFileChange">ok</button>
-<br />
-<h3>@Message</h3>
 @code {
-    ElementReference ReferenceToInputControl;
-    string Message = "No file(s) selected";
-    IReadOnlyList<IBrowserFile>? selectedFiles;
-    private async Task OnInputFileChange()
+    long maxFileSize = 1024 * 1024 * 15;
+    private async Task LoadFiles(InputFileChangeEventArgs e)
     {
-        var file = (await fileReaderService.CreateReference(ReferenceToInputControl).EnumerateFilesAsync()).FirstOrDefault();
-        if (file != null)
-        {
-            var fileInfo = await file.ReadFileInfoAsync();
-            Message = fileInfo.Name;
-            await using (Stream stream = await file.OpenReadAsync())
-            {
-                var dotnetImageStream = new DotNetStreamReference(stream);
-                await JS.InvokeVoidAsync("setImage", "image", dotnetImageStream);
-            }
-
-        }
-        else
-        {
-            Message = "234";
-        }
-        this.StateHasChanged();
+            var ImageFile = await e.File.RequestImageFileAsync("image/*",maxHeight: 640,maxWidth: 480);
+            await using (Stream stream = ImageFile.OpenReadStream(maxFileSize))
+                {
+                    var dotnetImageStream = new DotNetStreamReference(stream);
+                    await JS.InvokeVoidAsync("displayImage", "image", dotnetImageStream);
+                }
     }
-    private async void OnSubmit()
-    {
-        if (selectedFiles is not null)
-        {
-            foreach (var file in selectedFiles)
-            {
-                Stream stream = file.OpenReadStream();
-                MemoryStream ms = new MemoryStream();
-                await stream.CopyToAsync(ms);
-                stream.Close();
-            }
-            Message = $"{selectedFiles.Count} file(s) uploaded on server";
-            this.StateHasChanged();
-        }
-        else
-        {
-            Message = $"select a file is null";
-        }
-
-    }
-    private async Task<Stream> GetImageStreamAsync()
-    {
-        return await Http.GetStreamAsync(
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Argynnis_paphia_Mitterbach_01.jpg/750px-Argynnis_paphia_Mitterbach_01.jpg");
-    }
-
-    private async Task SetImageAsync()
-    {
-        var imageStream = await GetImageStreamAsync();
-        var dotnetImageStream = new DotNetStreamReference(imageStream);
-        await JS.InvokeVoidAsync("setImage", "image", dotnetImageStream);
-    }
-
 }
