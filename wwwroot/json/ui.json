@@ -1,0 +1,10 @@
+{
+    "data": [
+        {
+            "location":1,
+            "description": "",
+            "type":"radioBox",//["textField", "checkbox", "radioBox","imageUpload","DataPicker"],
+            "value": ["apple","banana","orange"]
+        }
+    ]
+}
