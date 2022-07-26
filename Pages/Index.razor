@@ -10,33 +10,28 @@
 Users can select from galery or capture
 <br />
 Camera opens straight away
-<input @ref="ReferenceToInputControl" @onclick="OnInputFileChange" type="file" accept="image/*" capture>
+<input @ref="ReferenceToInputControl" onclick="@(async () => await OnInputFileChange())" type="file" accept="image/*"
+    capture>
 <button @onclick="OnInputFileChange">ok</button>
+<button @onclick="SetImageAsync">❌</button>
 <br />
 <h3>@Message</h3>
 @code {
     ElementReference ReferenceToInputControl;
     string Message = "No file(s) selected";
     IReadOnlyList<IBrowserFile>? selectedFiles;
+    @* private IFileReference? file; *@
+
     private async Task OnInputFileChange()
     {
         var file = (await fileReaderService.CreateReference(ReferenceToInputControl).EnumerateFilesAsync()).FirstOrDefault();
-        if (file != null)
+        var fileInfo = await file.ReadFileInfoAsync();
+        Message = fileInfo.Name;
+        await using (Stream stream = await file.OpenReadAsync())
         {
-            var fileInfo = await file.ReadFileInfoAsync();
-            Message = fileInfo.Name;
-            await using (Stream stream = await file.OpenReadAsync())
-            {
-                var dotnetImageStream = new DotNetStreamReference(stream);
-                await JS.InvokeVoidAsync("setImage", "image", dotnetImageStream);
-            }
-
+            var dotnetImageStream = new DotNetStreamReference(stream);
+            await JS.InvokeVoidAsync("setImage", "image", dotnetImageStream);
         }
-        else
-        {
-            Message = "234";
-        }
-        this.StateHasChanged();
     }
     private async void OnSubmit()
     {
