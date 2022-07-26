@@ -1,12 +1,11 @@
 ﻿@page "/"
-@using Tewr.Blazor.FileReader
-@inject HttpClient Http
 @inject IJSRuntime JS
-@inject IFileReaderService fileReaderService;
 <p>
     <img id="image" />
 </p>
+<InputFile OnChange="@LoadFiles" accept="image/*" capture />
 
+<<<<<<< HEAD
 Users can select from galery or capture
 <br />
 Camera opens straight away
@@ -32,38 +31,17 @@ Camera opens straight away
             var dotnetImageStream = new DotNetStreamReference(stream);
             await JS.InvokeVoidAsync("setImage", "image", dotnetImageStream);
         }
-    }
-    private async void OnSubmit()
+=======
+@code {
+    long maxFileSize = 1024 * 1024 * 15;
+    private async Task LoadFiles(InputFileChangeEventArgs e)
     {
-        if (selectedFiles is not null)
-        {
-            foreach (var file in selectedFiles)
-            {
-                Stream stream = file.OpenReadStream();
-                MemoryStream ms = new MemoryStream();
-                await stream.CopyToAsync(ms);
-                stream.Close();
-            }
-            Message = $"{selectedFiles.Count} file(s) uploaded on server";
-            this.StateHasChanged();
-        }
-        else
-        {
-            Message = $"select a file is null";
-        }
-
+            var ImageFile = await e.File.RequestImageFileAsync("image/*",maxHeight: 640,maxWidth: 480);
+            await using (Stream stream = ImageFile.OpenReadStream(maxFileSize))
+                {
+                    var dotnetImageStream = new DotNetStreamReference(stream);
+                    await JS.InvokeVoidAsync("displayImage", "image", dotnetImageStream);
+                }
+>>>>>>> 7946a72a53206742d3b4c20bc2bebe5619c537f6
     }
-    private async Task<Stream> GetImageStreamAsync()
-    {
-        return await Http.GetStreamAsync(
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Argynnis_paphia_Mitterbach_01.jpg/750px-Argynnis_paphia_Mitterbach_01.jpg");
-    }
-
-    private async Task SetImageAsync()
-    {
-        var imageStream = await GetImageStreamAsync();
-        var dotnetImageStream = new DotNetStreamReference(imageStream);
-        await JS.InvokeVoidAsync("setImage", "image", dotnetImageStream);
-    }
-
 }

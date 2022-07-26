@@ -20,7 +20,6 @@ function insertImage(db, contact) {
         db.close();
     };
 }
-
 window.setImage = async (imageElementId, imageStream) => {
     const arrayBuffer = await imageStream.arrayBuffer();
     const blob = new Blob([arrayBuffer]);
@@ -60,7 +59,12 @@ window.setImage = async (imageElementId, imageStream) => {
         });
     };
 }
-
+window.displayImage = async (imageElementId, imageStream) => {
+    const arrayBuffer = await imageStream.arrayBuffer();
+    const blob = new Blob([arrayBuffer]);
+    const url = URL.createObjectURL(blob);
+    document.getElementById(imageElementId).src = url;
+};
 //////////////////////////////////////////////////////////////////////////
 function getImageById(db,imgID, id) {
     const txn = db.transaction('Images', 'readonly');
