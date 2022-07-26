@@ -1,31 +1,55 @@
 @page "/actions/addNote"
+@layout ActionLayout
+
+
+<MudAppBar Elevation="0">
+    <MudIconButton Icon="@Icons.Filled.ArrowBack" Color="Color.Inherit" Edge="Edge.Start" Href="/" />
+    <MudSpacer />
+    <MudIconButton Icon="@Icons.Filled.Save" Color="Color.Inherit" Target="_blank" OnClick="OpenOverlay" />
+</MudAppBar>
 
 <MudText Typo="@Typo.h6">Title</MudText>
-<MudTextField T="string"  Variant="Variant.Text" Text="@sampleText" Lines="1" />
+<MudTextField T="string" Variant="Variant.Outlined" Text="@sampleText" Lines="1" />
 <MudText Typo="@Typo.h6">Description</MudText>
-<MudTextField T="string"  Variant="Variant.Text" Text="@sampleText" Lines="5" />
+<MudTextField T="string" Variant="Variant.Outlined" Text="@sampleText" Lines="3" />
 
 @* File upload *@
 <InputFile id="fileInput" hidden multiple />
-<MudButton HtmlTag="label"
-        Variant="Variant.Filled"
-        Color="Color.Primary"
-        StartIcon="@Icons.Filled.CloudUpload"
-        for="fileInput"
-        Class="mt-16">
+<MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload"
+    for="fileInput" Class="mt-16">
     Upload Files
 </MudButton>
 @* ////////////// *@
 
 @* Camera Capture *@
-<MudFab Color="Color.Primary" StartIcon="@Icons.Filled.PhotoCamera"
-    HtmlTag="label"
-    for="fileInput"
+<MudFab Color="Color.Primary" StartIcon="@Icons.Filled.PhotoCamera" HtmlTag="label" for="fileInput"
     Style="@($"position: fixed;bottom: 20px;right: 20px;")" />
+@* ///////////// *@
+
+@* Dialog *@
+<MudOverlay @bind-Visible="isVisible" DarkBackground="true" AutoClose="true">
+    <MudCard Class="border-b-4 mud-border-dark pa-4">
+        <MudCardContent>
+            <MudText Typo="Typo.subtitle1">ARE YOU READY TO <b>SAVE</b> ?</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant="Variant.Text" Color="Color.Primary">Yes</MudButton>
+            <MudSpacer/>
+            <MudButton Variant="Variant.Text" Color="Color.Primary">No</MudButton>
+        </MudCardActions>
+    </MudCard>
+</MudOverlay>
 @* ///////////// *@
 @code
 {
     private MudTextField<string> multilineReference;
     private MudTextField<string> singleLineReference;
-    string sampleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+    string sampleText = "Lorem i labore et dolore magna aliqua.";
+    private bool isVisible;
+
+    public void OpenOverlay()
+    {
+        isVisible = true;
+        StateHasChanged();
+    }
 }
