@@ -1,19 +1,15 @@
 ﻿@page "/"
+@using Tewr.Blazor.FileReader
+@using System.IO;
+@inject IFileReaderService fileReaderService;
 @inject IJSRuntime JS
+
 <p>
     <img id="image" />
 </p>
-<InputFile OnChange="@LoadFiles" accept="image/*" capture />
+<InputFile OnChange="@OnInputFileChange" accept="image/*" capture />
 
-<<<<<<< HEAD
-Users can select from galery or capture
-<br />
-Camera opens straight away
-<input @ref="ReferenceToInputControl" onclick="@(async () => await OnInputFileChange())" type="file" accept="image/*"
-    capture>
-<button @onclick="OnInputFileChange">ok</button>
-<button @onclick="SetImageAsync">❌</button>
-<br />
+
 <h3>@Message</h3>
 @code {
     ElementReference ReferenceToInputControl;
@@ -31,17 +27,5 @@ Camera opens straight away
             var dotnetImageStream = new DotNetStreamReference(stream);
             await JS.InvokeVoidAsync("setImage", "image", dotnetImageStream);
         }
-=======
-@code {
-    long maxFileSize = 1024 * 1024 * 15;
-    private async Task LoadFiles(InputFileChangeEventArgs e)
-    {
-            var ImageFile = await e.File.RequestImageFileAsync("image/*",maxHeight: 640,maxWidth: 480);
-            await using (Stream stream = ImageFile.OpenReadStream(maxFileSize))
-                {
-                    var dotnetImageStream = new DotNetStreamReference(stream);
-                    await JS.InvokeVoidAsync("displayImage", "image", dotnetImageStream);
-                }
->>>>>>> 7946a72a53206742d3b4c20bc2bebe5619c537f6
     }
 }

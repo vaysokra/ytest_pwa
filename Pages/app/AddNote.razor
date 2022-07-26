@@ -1,0 +1,31 @@
+@page "/actions/addNote"
+
+<MudText Typo="@Typo.h6">Title</MudText>
+<MudTextField T="string"  Variant="Variant.Text" Text="@sampleText" Lines="1" />
+<MudText Typo="@Typo.h6">Description</MudText>
+<MudTextField T="string"  Variant="Variant.Text" Text="@sampleText" Lines="5" />
+
+@* File upload *@
+<InputFile id="fileInput" hidden multiple />
+<MudButton HtmlTag="label"
+        Variant="Variant.Filled"
+        Color="Color.Primary"
+        StartIcon="@Icons.Filled.CloudUpload"
+        for="fileInput"
+        Class="mt-16">
+    Upload Files
+</MudButton>
+@* ////////////// *@
+
+@* Camera Capture *@
+<MudFab Color="Color.Primary" StartIcon="@Icons.Filled.PhotoCamera"
+    HtmlTag="label"
+    for="fileInput"
+    Style="@($"position: fixed;bottom: 20px;right: 20px;")" />
+@* ///////////// *@
+@code
+{
+    private MudTextField<string> multilineReference;
+    private MudTextField<string> singleLineReference;
+    string sampleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+}

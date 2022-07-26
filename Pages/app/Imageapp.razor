@@ -1,4 +1,45 @@
 @page "/app/imageapp"
-<MudFab  Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Style="@($"position: fixed;bottom: 20px;right: 20px;")"/>
 
- 
+@* FAB button *@
+<MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
+    Style="@($"position: fixed;bottom: 20px;right: 20px;")" Href="actions/addNote" />
+@* *@
+
+
+<MudPaper Class="gap-4 d-flex flex-wrap" Elevation="0">
+    @for (int i = 0; i < 10; i++)
+    {
+        <MudCard>
+            <MudCardContent>
+                <MudText>Story of the day</MudText>
+                <MudText Typo="Typo.body2">The quick, brown fox jumps over a lazy dog.</MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
+            </MudCardActions>
+        </MudCard>
+    }
+    <MudCard>
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.body1">Istra Croatia</MudText>
+                <MudText Typo="Typo.body2">Peninsula in Europe</MudText>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
+            </CardHeaderActions>
+        </MudCardHeader>
+        <MudCardMedia
+            Image="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Argynnis_paphia_Mitterbach_01.jpg/750px-Argynnis_paphia_Mitterbach_01.jpg"
+            Height="200" />
+        <MudCardContent>
+            <MudText Typo="Typo.h5">Old Paint</MudText>
+            <MudText Typo="Typo.body2">Old paint found on a stone house door.</MudText>
+            <MudText Typo="Typo.body2">This photo was taken in a small village in Istra Croatia.</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant="Variant.Text" Color="Color.Primary">Share</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
+        </MudCardActions>
+    </MudCard>
+</MudPaper>
