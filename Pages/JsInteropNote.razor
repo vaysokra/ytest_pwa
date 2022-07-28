@@ -1,0 +1,33 @@
+@page "/js"
+@inject IJSRuntime JSRuntime
+
+<button @onclick=ButtonClicked>Perform interop</button>
+
+<p>@content</p>
+
+<p>
+    <input @bind="content" />
+</p>
+@code
+{
+    private static bool content { get; set; } = true;
+
+    // Return call back from JavaScript to C#
+    [JSInvokable]
+    public void JStoCSCall()
+    {
+         content=!content;
+         StateHasChanged();
+    }
+  private async Task ButtonClicked()
+  {
+    var dotNetObjRef = DotNetObjectReference.Create(this);
+    var note = new Models.Note
+    {
+      title = "good",
+      description = "hello every description",
+    };
+    await JSRuntime.InvokeVoidAsync("setNote",note,dotNetObjRef);
+    StateHasChanged();
+  }
+}

@@ -1,8 +1,8 @@
 function _insertNote(db, jsonData) {
     // create a new transaction
-    const txn = db.transaction('Notes', 'readwrite');
+    const txn = db.transaction('Notes12', 'readwrite');
     // get the Contacts object store
-    const store = txn.objectStore('Notes');
+    const store = txn.objectStore('Notes12');
     //
     let query = store.put(jsonData);
     // handle success case
@@ -20,14 +20,14 @@ function _insertNote(db, jsonData) {
         db.close();
     };
 }
-window.setNote = async (jsonData) => {
+window.setNote = async (jsonData,dotNetObjRef) => {
     // const arrayBuffer = await imageStream.arrayBuffer();
     // const blob = new Blob([arrayBuffer]);
     // const url = URL.createObjectURL(blob);
     // document.getElementById(imageElementId).src = url;
 
     //URL.revokeObjectURL(url);
-    const request = indexedDB.open('Note', 1);
+    const request = indexedDB.open('Notes1', 2);
 
     request.onerror = (event) => {
         console.error(`Database error: ${event.target.errorCode}`);
@@ -40,7 +40,9 @@ window.setNote = async (jsonData) => {
         _insertNote(db, {
             title: jsonData.title,
             description: jsonData.description,
+            home: "data12"
         });
+        dotNetObjRef.invokeMethod('JStoCSCall');
     };
     // create the Contacts object store and indexes
     request.onupgradeneeded = (event) => {
@@ -48,7 +50,7 @@ window.setNote = async (jsonData) => {
 
         // create the Contacts object store 
         // with auto-increment id
-        let store = db.createObjectStore('Notes', {
+        let store = db.createObjectStore('Notes12', {
             autoIncrement: true
         });
     };

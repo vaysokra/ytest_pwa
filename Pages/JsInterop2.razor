@@ -1,0 +1,40 @@
+@page "/js2"
+@inject IJSRuntime JSRuntime
+
+<div class="row">
+    <div class="col-md-4">
+        <h4>Calling instance method from JS </h4>
+    </div>
+    <div class="col-md-2">
+        <button type="button" class="btn btn-success" @onclick="SendDotNetInstanceToJS">
+            Send Instance
+        </button>
+    </div>
+    <div class="col-md-4">
+        <p id="coordinates" style="height: 200px; width: 400px;    background-color: #d6d8d6;
+            text-align:center; font-size:20px;">
+            @_coordinates
+        </p>
+    </div>
+</div>
+
+@code {
+    private bool _coordinates {set ; get; } = true;
+    private async Task SendDotNetInstanceToJS()
+    {
+        var dotNetObjRef = DotNetObjectReference.Create(this);
+        await JSRuntime.InvokeVoidAsync("registerMouseCoordinatesHandler",dotNetObjRef);
+    }
+
+    [JSInvokable]
+    public void ShowCoordinates()
+    {
+        _coordinates =! _coordinates;
+        StateHasChanged();
+    }
+    public class MouseCoordinates
+    {
+        public int X { get; set; }
+        public int Y { get; set; }
+    }
+}
