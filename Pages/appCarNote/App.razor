@@ -1,0 +1,31 @@
+@page "/appcarnote/app"
+
+@* FAB button *@
+<MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
+    Style="@($"position: fixed;bottom: 20px;right: 20px;")" />
+@* *@
+<MudButton OnClick="Home">on</MudButton>
+<MudPaper Class="gap-4 d-flex flex-wrap" Elevation="0">
+        @foreach(int number in numbers)
+        {
+            <MudCard @key=number>
+                <MudCardContent>
+                    <MudText>Story of the day @number</MudText>
+                    <MudText Typo="Typo.body2">The quick, brown fox jumps over a lazy dog.</MudText>
+                </MudCardContent> 
+                <MudCardActions>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
+                </MudCardActions>
+            </MudCard>
+        }
+</MudPaper>
+
+@code{
+    List<int> numbers = new List<int>();
+    public void Home(){
+        for (int i = 0; i < 100; i++)
+        {
+            numbers.Add(i);
+        }
+    }
+}

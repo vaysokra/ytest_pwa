@@ -1,7 +1,8 @@
-@page "/actions/addNote"
+@page "/appcarnote/addNote"
 @layout ActionLayout
 @inject NavigationManager NavigationManager
 
+@* AppBar *@
 <MudAppBar Elevation="0">
     <MudIconButton Icon="@Icons.Filled.ArrowBack" Color="Color.Inherit" Edge="Edge.Start" Href="/app/imageApp" />
     <MudSpacer />
@@ -17,48 +18,31 @@
             <MudText>Save</MudText>
         }
     </MudButton>
-
 </MudAppBar>
+@* ///////////// *@
 
 <MudText Typo="@Typo.h6">Title</MudText>
 <MudTextField T="string" Variant="Variant.Outlined" FullWidth="true" Text="@sampleText" Lines="1" />
 <MudText Typo="@Typo.h6">Description</MudText>
 <MudTextField T="string" Variant="Variant.Outlined" FullWidth="true" Text="@sampleText" Lines="3" />
 
-@* Image Preview *@
-<div class="d-flex flex-wrap justify-center gap-4 mt-16">
-    <MudImage ObjectFit="ObjectFit.Cover" Height="200" Width="200"
-        Src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Argynnis_paphia_Mitterbach_01.jpg/750px-Argynnis_paphia_Mitterbach_01.jpg"
-        Alt="Öxarárfoss, Iceland" Elevation="25" />
-    <MudImage ObjectFit="ObjectFit.Contain" Height="200" Width="200"
-        Src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Argynnis_paphia_Mitterbach_01.jpg/750px-Argynnis_paphia_Mitterbach_01.jpg"
-        Alt="Öxarárfoss, Iceland" Elevation="25" />
-</div>
-<div class="row justify-center">
-    <div class="column">
-        <MudImage ObjectFit="ObjectFit.Cover" Height="200" Width="200"
-            Src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Argynnis_paphia_Mitterbach_01.jpg/750px-Argynnis_paphia_Mitterbach_01.jpg"
-            Alt="Öxarárfoss, Iceland" Elevation="25" />
-        <MudImage ObjectFit="ObjectFit.Contain" Height="200" Width="200"
-            Src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Argynnis_paphia_Mitterbach_01.jpg/750px-Argynnis_paphia_Mitterbach_01.jpg"
-            Alt="Öxarárfoss, Iceland" Elevation="25" />
-    </div>
-    <div class="column">
-        <MudImage ObjectFit="ObjectFit.Cover" Height="200" Width="200"
-            Src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Argynnis_paphia_Mitterbach_01.jpg/750px-Argynnis_paphia_Mitterbach_01.jpg"
-            Alt="Öxarárfoss, Iceland" Elevation="25" />
-    </div>
-</div>
-@* ///////////// *@
+<MudText Typo="@Typo.h6">សូមជ្រើសរើសប្រភេទយានជំនិ</MudText>
+<MudRadioGroup T="int">
+    <MudRadio Option="1" Color="Color.Primary" UnCheckedColor="Color.Default">ម៉ូតូ</MudRadio>
+    <MudRadio Option="2" Color="Color.Secondary" UnCheckedColor="Color.Default">ឡាន</MudRadio>
+    <MudRadio Option="3" Color="Color.Success" UnCheckedColor="Color.Error">កង់</MudRadio>
+    <MudRadio Option="4" Color="Color.Primary" Disabled="true">យន្តហោះ</MudRadio>
+</MudRadioGroup>
 
-@* File upload *@
-<InputFile id="fileInput" hidden multiple />
-<MudButton HtmlTag="label" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Filled.CloudUpload"
-    for="fileInput" Class="mt-16">
-    Upload Files
-</MudButton>
-@* ////////////// *@
+<MudText Typo="@Typo.h6">តំរងប្រេង</MudText>
+<MudSelect T="double" Label="Price" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+    <MudSelectItem T="double" Value="4.50"/>
+    <MudSelectItem T="double" Value="4.99"/>
+    <MudSelectItem T="double" Value="3.60"/>
+</MudSelect>
 
+<MudText Typo="@Typo.h6">ថ្ងៃខែឆ្នាំដែលផ្លាស់ប្តូរ</MudText>
+<MudDatePicker Label="Basic example" @bind-Date="date"/>
 @* Camera Capture *@
 <MudFab Color="Color.Primary" StartIcon="@Icons.Filled.PhotoCamera" HtmlTag="label" for="fileInput"
     Style="@($"position: fixed;bottom: 20px;right: 20px;")" />
@@ -81,6 +65,7 @@
 @* ///////////// *@
 @code
 {
+    DateTime? date = DateTime.Today;
     private MudTextField<string> multilineReference;
     private MudTextField<string> singleLineReference;
     string sampleText = "";
