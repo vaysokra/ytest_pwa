@@ -20,7 +20,7 @@ function _f_insertNote(db, jsonData) {
         db.close();
     };
 }
-function _f_findDB_by_id(db, id) {
+function _f_findDB_by_id(db,id,dotNetObjRef) {
     const txn = db.transaction('CarNote', 'readonly');
     const store = txn.objectStore('CarNote');
 
@@ -31,6 +31,7 @@ function _f_findDB_by_id(db, id) {
             console.log(`The contact with ${id} not found`);
         } else {
             console.table(event.target.result);
+            dotNetObjRef.invokeMethod('ReadDataFromJS',event.target.result);
         }
     };
 
@@ -42,7 +43,7 @@ function _f_findDB_by_id(db, id) {
         db.close();
     };
 };
-// function _readNote()
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 window.setNote = async (jsonData,dotNetObjRef) => {
     // const arrayBuffer = await imageStream.arrayBuffer();
     // const blob = new Blob([arrayBuffer]);
@@ -80,7 +81,7 @@ window.setNote = async (jsonData,dotNetObjRef) => {
         });
     };
 }
-window.FindNoteDB = async () => {
+window.FindNoteDB = async (dotNetObjRef) => {
     const request = indexedDB.open('CarNoteDB', 1);
 
     request.onerror = (event) => {
@@ -90,6 +91,7 @@ window.FindNoteDB = async () => {
     request.onsuccess = (event) => {
         // add implementation here
         const db = event.target.result;
-        _f_findDB_by_id(db, 1);
+        _f_findDB_by_id(db,1,dotNetObjRef);
+        
     };
 }

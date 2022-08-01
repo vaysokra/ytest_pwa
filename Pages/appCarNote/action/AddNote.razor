@@ -4,6 +4,7 @@
 @inject NavigationManager NavigationManager
 @inject IJSRuntime JSRuntime
 
+
 @* AppBar *@
 <MudAppBar Elevation="0">
     <MudIconButton Icon="@Icons.Filled.ArrowBack" Color="Color.Inherit" Edge="Edge.Start" Href="/app/imageApp" />
@@ -91,6 +92,7 @@
         var dotNetObjRef = DotNetObjectReference.Create(this);
         await JSRuntime.InvokeVoidAsync("setNote",_carNote, dotNetObjRef);
     }
+  
     public void OpenOverlay()
     {
         isVisible = true;
