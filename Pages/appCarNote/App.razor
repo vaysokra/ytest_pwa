@@ -22,6 +22,10 @@
 
 @code {
     List<CarNote> _notes = new List<CarNote>();
+    protected override void OnInitialized()
+    {
+        readData();
+    }
         public void readData(){
             _notes.Add(
                 new CarNote(){

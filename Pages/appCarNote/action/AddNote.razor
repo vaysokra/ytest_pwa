@@ -2,6 +2,7 @@
 @using IndexedDBBlazor.Models
 @layout ActionLayout
 @inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
 @* AppBar *@
 <MudAppBar Elevation="0">
@@ -23,9 +24,9 @@
 @* ///////////// *@
 
 <MudText Typo="@Typo.h6">Title</MudText>
-<MudTextField T="string" Variant="Variant.Outlined" FullWidth="true"  Lines="1" @bind-Text="@_carNote.title" />
+<MudTextField T="string" Variant="Variant.Outlined" FullWidth="true" Lines="1" @bind-Text="@_carNote.title" />
 <MudText Typo="@Typo.h6">Description</MudText>
-<MudTextField T="string" Variant="Variant.Outlined" FullWidth="true"  Lines="3" @bind-Text="@_carNote.description" />
+<MudTextField T="string" Variant="Variant.Outlined" FullWidth="true" Lines="3" @bind-Text="@_carNote.description" />
 
 <MudText Typo="@Typo.h6">សូមជ្រើសរើសប្រភេទយានជំនិះ</MudText>
 <MudRadioGroup T="int" @bind-SelectedOption="@_carNote.typeID" Color="Color.Primary">
@@ -35,14 +36,15 @@
 </MudRadioGroup>
 
 <MudText Typo="@Typo.h6">តំរងប្រេង</MudText>
-<MudSelect T="double" Label="Price" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" @bind-Value="@_carNote.filter">
-    <MudSelectItem T="double" Value="4.50"/>
-    <MudSelectItem T="double" Value="4.99"/>
-    <MudSelectItem T="double" Value="3.60"/>
+<MudSelect T="double" Label="Price" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter"
+    @bind-Value="@_carNote.filter">
+    <MudSelectItem T="double" Value="4.50" />
+    <MudSelectItem T="double" Value="4.99" />
+    <MudSelectItem T="double" Value="3.60" />
 </MudSelect>
 
 <MudText Typo="@Typo.h6">ថ្ងៃខែឆ្នាំដែលផ្លាស់ប្តូរ</MudText>
-<MudDatePicker Label="Basic example" @bind-Date="@date"/>
+<MudDatePicker Label="Basic example" @bind-Date="@date" />
 
 @* Camera Capture *@
 <MudFab Color="Color.Primary" StartIcon="@Icons.Filled.PhotoCamera" HtmlTag="label" for="fileInput"
@@ -77,7 +79,18 @@
     @* _carNote.startDate = DateTime.Today; *@
     private bool isVisible;
     private bool _processing = false;
-
+    [JSInvokable]
+    public void SuccessfulNotify()
+    {
+        _processing = false;
+        StateHasChanged();
+        NavigationManager.NavigateTo("/appcarnote/app");
+    }
+    private async Task _SendDotNetInstanceToJS()
+    {
+        var dotNetObjRef = DotNetObjectReference.Create(this);
+        await JSRuntime.InvokeVoidAsync("setNote",_carNote, dotNetObjRef);
+    }
     public void OpenOverlay()
     {
         isVisible = true;
@@ -90,7 +103,6 @@
         StateHasChanged();
         _processing = true;
         await Task.Delay(500);
-        _processing = false;
-        NavigationManager.NavigateTo("/app/imageapp");
+        await _SendDotNetInstanceToJS();
     }
 }

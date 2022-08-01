@@ -63,9 +63,11 @@ window.setNote = async (jsonData,dotNetObjRef) => {
         _f_insertNote(db, {
             title: jsonData.title,
             description: jsonData.description,
-            home: "data12"
+            typeID: jsonData.typeID,
+            filter: jsonData.filter,
+            startDate: jsonData.startDate,
         });
-        dotNetObjRef.invokeMethod('JStoCSCall');
+        dotNetObjRef.invokeMethod('SuccessfulNotify');
     };
     // create the Contacts object store and indexes
     request.onupgradeneeded = (event) => {
