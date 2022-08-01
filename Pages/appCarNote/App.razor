@@ -1,31 +1,37 @@
 @page "/appcarnote/app"
-
+@using IndexedDBBlazor.Models
 @* FAB button *@
 <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
-    Style="@($"position: fixed;bottom: 20px;right: 20px;")" />
+    Style="@($"position: fixed;bottom: 20px;right: 20px;")" Href="/appcarnote/addNote"/>
 @* *@
-<MudButton OnClick="Home">on</MudButton>
+<MudButton OnClick="readData ">hi</MudButton>
 <MudPaper Class="gap-4 d-flex flex-wrap" Elevation="0">
-        @foreach(int number in numbers)
-        {
-            <MudCard @key=number>
-                <MudCardContent>
-                    <MudText>Story of the day @number</MudText>
-                    <MudText Typo="Typo.body2">The quick, brown fox jumps over a lazy dog.</MudText>
-                </MudCardContent> 
-                <MudCardActions>
-                    <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
-                </MudCardActions>
-            </MudCard>
-        }
+    @foreach (CarNote _note in _notes)
+    {
+        <MudCard>
+            <MudCardContent>
+                <MudText>Story of the day @_note.title  @_note.typeID</MudText>
+                <MudText Typo="Typo.body2">@_note.description, @_note.filter , @_note.startDate </MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
+            </MudCardActions>
+        </MudCard>
+    }
 </MudPaper>
 
-@code{
-    List<int> numbers = new List<int>();
-    public void Home(){
-        for (int i = 0; i < 100; i++)
-        {
-            numbers.Add(i);
+@code {
+    List<CarNote> _notes = new List<CarNote>();
+        public void readData(){
+            _notes.Add(
+                new CarNote(){
+                    title = "car",
+                    description = "home near",
+                    filter = 1,
+                    typeID = 23,
+                    startDate = Convert.ToDateTime("5/5/2005 15:00:00 PM")
+                }
+            );
         }
-    }
+    
 }

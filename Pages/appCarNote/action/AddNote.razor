@@ -1,4 +1,5 @@
 @page "/appcarnote/addNote"
+@using IndexedDBBlazor.Models
 @layout ActionLayout
 @inject NavigationManager NavigationManager
 
@@ -22,27 +23,27 @@
 @* ///////////// *@
 
 <MudText Typo="@Typo.h6">Title</MudText>
-<MudTextField T="string" Variant="Variant.Outlined" FullWidth="true" Text="@sampleText" Lines="1" />
+<MudTextField T="string" Variant="Variant.Outlined" FullWidth="true"  Lines="1" @bind-Text="@_carNote.title" />
 <MudText Typo="@Typo.h6">Description</MudText>
-<MudTextField T="string" Variant="Variant.Outlined" FullWidth="true" Text="@sampleText" Lines="3" />
+<MudTextField T="string" Variant="Variant.Outlined" FullWidth="true"  Lines="3" @bind-Text="@_carNote.description" />
 
-<MudText Typo="@Typo.h6">សូមជ្រើសរើសប្រភេទយានជំនិ</MudText>
-<MudRadioGroup T="int">
-    <MudRadio Option="1" Color="Color.Primary" UnCheckedColor="Color.Default">ម៉ូតូ</MudRadio>
-    <MudRadio Option="2" Color="Color.Secondary" UnCheckedColor="Color.Default">ឡាន</MudRadio>
-    <MudRadio Option="3" Color="Color.Success" UnCheckedColor="Color.Error">កង់</MudRadio>
-    <MudRadio Option="4" Color="Color.Primary" Disabled="true">យន្តហោះ</MudRadio>
+<MudText Typo="@Typo.h6">សូមជ្រើសរើសប្រភេទយានជំនិះ</MudText>
+<MudRadioGroup T="int" @bind-SelectedOption="@_carNote.typeID" Color="Color.Primary">
+    <MudRadio Option="1" UnCheckedColor="Color.Default">ម៉ូតូ</MudRadio>
+    <MudRadio Option="2" UnCheckedColor="Color.Default">ឡាន</MudRadio>
+    <MudRadio Option="3" UnCheckedColor="Color.Error">កង់</MudRadio>
 </MudRadioGroup>
 
 <MudText Typo="@Typo.h6">តំរងប្រេង</MudText>
-<MudSelect T="double" Label="Price" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+<MudSelect T="double" Label="Price" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter" @bind-Value="@_carNote.filter">
     <MudSelectItem T="double" Value="4.50"/>
     <MudSelectItem T="double" Value="4.99"/>
     <MudSelectItem T="double" Value="3.60"/>
 </MudSelect>
 
 <MudText Typo="@Typo.h6">ថ្ងៃខែឆ្នាំដែលផ្លាស់ប្តូរ</MudText>
-<MudDatePicker Label="Basic example" @bind-Date="date"/>
+<MudDatePicker Label="Basic example" @bind-Date="@date"/>
+
 @* Camera Capture *@
 <MudFab Color="Color.Primary" StartIcon="@Icons.Filled.PhotoCamera" HtmlTag="label" for="fileInput"
     Style="@($"position: fixed;bottom: 20px;right: 20px;")" />
@@ -52,6 +53,12 @@
 <MudOverlay @bind-Visible="isVisible" DarkBackground="true" AutoClose="true">
     <MudCard Class="border-b-4 mud-border-dark pa-4">
         <MudCardContent>
+            <MudText Typo="Typo.subtitle1">@_carNote.title
+                @_carNote.description
+                @_carNote.typeID
+                @_carNote.filter
+                @_carNote.startDate
+            </MudText>
             <MudText Typo="Typo.subtitle1">ARE YOU READY TO <b>SAVE</b> ?</MudText>
         </MudCardContent>
         <MudCardActions>
@@ -66,15 +73,15 @@
 @code
 {
     DateTime? date = DateTime.Today;
-    private MudTextField<string> multilineReference;
-    private MudTextField<string> singleLineReference;
-    string sampleText = "";
+    CarNote _carNote = new CarNote();
+    @* _carNote.startDate = DateTime.Today; *@
     private bool isVisible;
     private bool _processing = false;
 
     public void OpenOverlay()
     {
         isVisible = true;
+        _carNote.startDate = date;
         StateHasChanged();
     }
     async Task ProcessSomething()
@@ -82,7 +89,7 @@
         isVisible = false;
         StateHasChanged();
         _processing = true;
-        await Task.Delay(2000);
+        await Task.Delay(500);
         _processing = false;
         NavigationManager.NavigateTo("/app/imageapp");
     }
