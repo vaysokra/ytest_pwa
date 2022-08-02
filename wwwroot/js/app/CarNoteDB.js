@@ -20,7 +20,31 @@ function _f_insertNote(db, jsonData) {
         db.close();
     };
 }
-function _f_findDB_by_id(db,id,dotNetObjRef) {
+function _f_readAll(db, dotNetObjRef) {
+    const txn = db.transaction('CarNote', 'readonly');
+    const store = txn.objectStore('CarNote');
+
+    // let query = store.getAll();
+    let query = store.openCursor();
+
+    query.onsuccess = (event) => {
+        if (!event.target.result) {
+            console.log(`The contact with ${id} not found`);
+        } else {
+            console.table(event.target.result);
+            dotNetObjRef.invokeMethod('_f_readAll', event.target.result.value);
+        }
+    };
+
+    query.onerror = (event) => {
+        console.log(event.target.errorCode);
+    }
+
+    txn.oncomplete = function () {
+        db.close();
+    };
+};
+function _f_findDB_by_id(db, id, dotNetObjRef) {
     const txn = db.transaction('CarNote', 'readonly');
     const store = txn.objectStore('CarNote');
 
@@ -31,7 +55,7 @@ function _f_findDB_by_id(db,id,dotNetObjRef) {
             console.log(`The contact with ${id} not found`);
         } else {
             console.table(event.target.result);
-            dotNetObjRef.invokeMethod('ReadDataFromJS',event.target.result);
+            dotNetObjRef.invokeMethod('_f_findDB_by_id', event.target.result);
         }
     };
 
@@ -44,7 +68,7 @@ function _f_findDB_by_id(db,id,dotNetObjRef) {
     };
 };
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-window.setNote = async (jsonData,dotNetObjRef) => {
+window.setNote = async (jsonData, dotNetObjRef) => {
     // const arrayBuffer = await imageStream.arrayBuffer();
     // const blob = new Blob([arrayBuffer]);
     // const url = URL.createObjectURL(blob);
@@ -81,7 +105,8 @@ window.setNote = async (jsonData,dotNetObjRef) => {
         });
     };
 }
-window.FindNoteDB = async (dotNetObjRef) => {
+
+window.FindNoteDB = async (id,dotNetObjRef) => {
     const request = indexedDB.open('CarNoteDB', 1);
 
     request.onerror = (event) => {
@@ -91,7 +116,22 @@ window.FindNoteDB = async (dotNetObjRef) => {
     request.onsuccess = (event) => {
         // add implementation here
         const db = event.target.result;
-        _f_findDB_by_id(db,1,dotNetObjRef);
-        
+        _f_findDB_by_id(db, 1, dotNetObjRef);
+
+    };
+}
+
+window.ReadAllNoteDB = async (dotNetObjRef) => {
+    const request = indexedDB.open('CarNoteDB', 1);
+
+    request.onerror = (event) => {
+        console.error(`Database error: ${event.target.errorCode}`);
+    };
+
+    request.onsuccess = (event) => {
+        // add implementation here
+        const db = event.target.result;
+        _f_readAll(db, dotNetObjRef);
+
     };
 }
