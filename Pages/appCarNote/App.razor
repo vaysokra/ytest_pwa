@@ -1,15 +1,17 @@
 @page "/appcarnote/app"
 @using IndexedDBBlazor.Models
 @inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+
 @* FAB button *@
 <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add"
     Style="@($"position: fixed;bottom: 20px;right: 20px;")" Href="/appcarnote/addNote" />
 @* *@
-<MudButton OnClick="readData2">hi</MudButton>
+
 <MudPaper Class="gap-4 d-flex flex-wrap" Elevation="0">
     @foreach (CarNote _note in _notes)
     {
-        <MudCard>
+        <MudCard Outlined="true" @onclick="@(() => GotoEdit(@_note.title))">
             <MudCardContent>
                 <MudText>Story of the day @_note.title @_note.typeID</MudText>
                 <MudText Typo="Typo.body2">@_note.description, @_note.filter , @_note.startDate </MudText>
@@ -36,10 +38,10 @@
         _notes.Add(message);
         StateHasChanged();
     }
-    public async void readData2()
+    public void GotoEdit(string id)
     {
-        var dotNetObjRef = DotNetObjectReference.Create(this);
-        await JSRuntime.InvokeVoidAsync("ReadAllNoteDB", dotNetObjRef);
+        @* string id = "1"; *@
+        NavigationManager.NavigateTo("/appcarnote/editNote/"+id);
     }
     public void readData()
     {

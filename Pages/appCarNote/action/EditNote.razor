@@ -1,0 +1,9 @@
+@page "/appcarnote/editNote/{myvalue}"
+@layout ActionLayout
+
+<p>this is @myvalue</p>
+
+@code {
+    [Parameter]
+    public string myvalue { get; set; }
+}
