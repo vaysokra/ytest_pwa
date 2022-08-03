@@ -31,9 +31,9 @@
     List<CarNote> _notes = new List<CarNote>();
     CarNote _note = new CarNote();
     [JSInvokable]
-    public void _f_readAll(List<CarNote> message)
+    public void _f_readAll(CarNote message)
     {
-        _notes = message;
+        _notes.Add(message);
         StateHasChanged();
     }
     public async void readData2()

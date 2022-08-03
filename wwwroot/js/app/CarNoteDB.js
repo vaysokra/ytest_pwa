@@ -28,11 +28,19 @@ function _f_readAll(db, dotNetObjRef) {
     let query = store.openCursor();
 
     query.onsuccess = (event) => {
-        if (!event.target.result) {
-            console.log(`The contact with ${id} not found`);
-        } else {
-            console.table(event.target.result);
-            dotNetObjRef.invokeMethod('_f_readAll', event.target.result.value);
+        // if (!event.target.result) {
+        //     console.log(`The contact with ${id} not found`);
+        // } else {
+        //     console.table(event.target.result);
+        //     dotNetObjRef.invokeMethod('_f_readAll', event.target.result.value);
+        // }
+        const cursor = event.target.result;
+        if (cursor) {
+            console.table(cursor);
+            dotNetObjRef.invokeMethod('_f_readAll', cursor.value);
+            cursor.continue();
+        }else {
+            console.log('Exhausted all documents');
         }
     };
 
