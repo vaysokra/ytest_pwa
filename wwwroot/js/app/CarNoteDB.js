@@ -37,7 +37,7 @@ function _f_readAll(db, dotNetObjRef) {
         const cursor = event.target.result;
         if (cursor) {
             console.table(cursor);
-            dotNetObjRef.invokeMethod('_f_readAll', cursor.value);
+            dotNetObjRef.invokeMethod('_f_readAll',cursor.primaryKey, cursor.value);
             cursor.continue();
         }else {
             console.log('Exhausted all documents');
@@ -52,7 +52,7 @@ function _f_readAll(db, dotNetObjRef) {
         db.close();
     };
 };
-function _f_findDB_by_id(db, id, dotNetObjRef) {
+function _f_findDB_by_id(db,id, dotNetObjRef) {
     const txn = db.transaction('CarNote', 'readonly');
     const store = txn.objectStore('CarNote');
 
@@ -75,7 +75,7 @@ function _f_findDB_by_id(db, id, dotNetObjRef) {
         db.close();
     };
 };
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////production function///////////////////////////////////////////////////////////////////////////////////////////////
 window.setNote = async (jsonData, dotNetObjRef) => {
     // const arrayBuffer = await imageStream.arrayBuffer();
     // const blob = new Blob([arrayBuffer]);

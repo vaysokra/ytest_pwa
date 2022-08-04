@@ -1,9 +1,131 @@
-@page "/appcarnote/editNote/{myvalue}"
+@page "/appcarnote/editNote/{id}"
 @layout ActionLayout
+@using IndexedDBBlazor.Models
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
 
-<p>this is @myvalue</p>
+<p>this is @id</p>
+@* AppBar *@
+<MudAppBar Elevation="0">
+    <MudIconButton Icon="@Icons.Filled.ArrowBack" Color="Color.Inherit" Edge="Edge.Start" Href="/appcarnote/app" />
+    <MudSpacer />
+    <MudButton Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Save" Color="Color.Primary"
+        Style="color: white;iconColor:white;" Size="Size.Large" OnClick="OpenOverlay">
+        @if (_processing)
+        {
+            <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+            <MudText Class="ms-2">Processing</MudText>
+        }
+        else
+        {
+            <MudText>Save</MudText>
+        }
+    </MudButton>
+</MudAppBar>
+@* ///////////// *@
+
+<MudText Typo="@Typo.h6">Title</MudText>
+<MudTextField T="string" Variant="Variant.Outlined" FullWidth="true" Lines="1" @bind-Text="@_carNote.title" />
+<MudText Typo="@Typo.h6">Description</MudText>
+<MudTextField T="string" Variant="Variant.Outlined" FullWidth="true" Lines="3" @bind-Text="@_carNote.description" />
+
+<MudText Typo="@Typo.h6">សូមជ្រើសរើសប្រភេទយានជំនិះ</MudText>
+<MudRadioGroup T="int" @bind-SelectedOption="@_carNote.typeID" Color="Color.Primary">
+    <MudRadio Option="1" UnCheckedColor="Color.Default">ម៉ូតូ</MudRadio>
+    <MudRadio Option="2" UnCheckedColor="Color.Default">ឡាន</MudRadio>
+    <MudRadio Option="3" UnCheckedColor="Color.Error">កង់</MudRadio>
+</MudRadioGroup>
+
+<MudText Typo="@Typo.h6">តំរងប្រេង</MudText>
+<MudSelect T="double" Label="Price" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter"
+    @bind-Value="@_carNote.filter">
+    <MudSelectItem T="double" Value="4.50" />
+    <MudSelectItem T="double" Value="4.99" />
+    <MudSelectItem T="double" Value="3.60" />
+</MudSelect>
+
+<MudText Typo="@Typo.h6">ថ្ងៃខែឆ្នាំដែលផ្លាស់ប្តូរ</MudText>
+<MudDatePicker Label="Basic example" @bind-Date="@date" />
+
+@* Camera Capture *@
+<MudFab Color="Color.Primary" StartIcon="@Icons.Filled.PhotoCamera" HtmlTag="label" for="fileInput"
+    Style="@($"position: fixed;bottom: 20px;right: 20px;")" />
+@* ///////////// *@
+
+@* Dialog *@
+<MudOverlay @bind-Visible="isVisible" DarkBackground="true" AutoClose="true">
+    <MudCard Class="border-b-4 mud-border-dark pa-4">
+        <MudCardContent>
+            <MudText Typo="Typo.subtitle1">@_carNote.title
+                @_carNote.description
+                @_carNote.typeID
+                @_carNote.filter
+                @_carNote.startDate
+            </MudText>
+            <MudText Typo="Typo.subtitle1">ARE YOU READY TO <b>SAVE</b> ?</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="ProcessSomething">
+                Yes</MudButton>
+            <MudSpacer />
+            <MudButton Variant="Variant.Text" Color="Color.Primary">No</MudButton>
+        </MudCardActions>
+    </MudCard>
+</MudOverlay>
+@* ///////////// *@
 
 @code {
+    protected override async Task OnInitializedAsync()
+    {
+        var dotNetObjRef = DotNetObjectReference.Create(this);
+        await JSRuntime.InvokeVoidAsync("FindNoteDB", id, dotNetObjRef);
+    }
     [Parameter]
-    public string myvalue { get; set; }
+    public string id { get; set; }
+    DateTime? date = DateTime.Today;
+    CarNote _carNote = new CarNote();
+    @* _carNote.startDate = DateTime.Today; *@
+    private bool isVisible;
+    private bool _processing = false;
+    [JSInvokable]
+    public void SuccessfulNotify()
+    {
+        _processing = false;
+        StateHasChanged();
+        NavigationManager.NavigateTo("/appcarnote/app");
+    }
+    [JSInvokable]
+    public void _f_findDB_by_id(CarNote message)
+    {
+        _carNote = new CarNote()
+        {
+            title = message.title,
+            typeID = message.typeID,
+            description = message.description,
+            filter = message.filter,
+            startDate = message.startDate,
+        }
+        ;
+        StateHasChanged();
+    }
+    private async Task _SendDotNetInstanceToJS()
+    {
+        var dotNetObjRef = DotNetObjectReference.Create(this);
+        @* await JSRuntime.InvokeVoidAsync("setNote",_carNote, dotNetObjRef); *@
+    }
+
+    public void OpenOverlay()
+    {
+        isVisible = true;
+        _carNote.startDate = date;
+        StateHasChanged();
+    }
+    async Task ProcessSomething()
+    {
+        isVisible = false;
+        StateHasChanged();
+        _processing = true;
+        await Task.Delay(500);
+        await _SendDotNetInstanceToJS();
+    }
 }

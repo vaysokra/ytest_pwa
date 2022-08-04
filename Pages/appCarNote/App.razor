@@ -9,9 +9,9 @@
 @* *@
 
 <MudPaper Class="gap-4 d-flex flex-wrap" Elevation="0">
-    @foreach (CarNote _note in _notes)
+    @foreach (ReadCarNote _note in _notes)
     {
-        <MudCard Outlined="true" @onclick="@(() => GotoEdit(@_note.title))">
+        <MudCard Outlined="true" @onclick="@(() => GotoEdit(@_note.ID))">
             <MudCardContent>
                 <MudText>Story of the day @_note.title @_note.typeID</MudText>
                 <MudText Typo="Typo.body2">@_note.description, @_note.filter , @_note.startDate </MudText>
@@ -30,15 +30,24 @@
         var dotNetObjRef = DotNetObjectReference.Create(this);
         await JSRuntime.InvokeVoidAsync("ReadAllNoteDB", dotNetObjRef);
     }
-    List<CarNote> _notes = new List<CarNote>();
+    List<ReadCarNote> _notes = new List<ReadCarNote>();
     CarNote _note = new CarNote();
     [JSInvokable]
-    public void _f_readAll(CarNote message)
+    public void _f_readAll(int id,CarNote message)
     {
-        _notes.Add(message);
+        _notes.Add(
+            new ReadCarNote(){
+                ID = id,
+                title = message.title,
+                typeID = message.typeID,
+                description = message.description,
+                filter = message.filter,
+                startDate = message.startDate,
+            }
+        );
         StateHasChanged();
     }
-    public void GotoEdit(string id)
+    public void GotoEdit(int id)
     {
         @* string id = "1"; *@
         NavigationManager.NavigateTo("/appcarnote/editNote/"+id);
@@ -46,7 +55,7 @@
     public void readData()
     {
         _notes.Add(
-        new CarNote()
+        new ReadCarNote()
         {
             title = "car",
             description = "home near",
