@@ -98,6 +98,8 @@ function _f_3updateNote(db, id, jsonData, dotNetObjRef) {
     // }
     store.openCursor().onsuccess = (event) => {
         const cursor = event.target.result;
+        console.log("12 "+event);
+        console.log("122 "+cursor);
         if (cursor) {
             if (cursor.primaryKey === parseInt(id)) {
                 const updateData = jsonData;
@@ -110,6 +112,29 @@ function _f_3updateNote(db, id, jsonData, dotNetObjRef) {
             cursor.continue();
         } else {
             console.log('Entries all displayed.');
+        }
+    }
+}
+function _f_4DeleteNote(db, id, dotNetObjRef) {
+    const txn = db.transaction('CarNote', 'readwrite');
+    const store = txn.objectStore('CarNote');
+    //
+    console.log(store);
+    store.openCursor().onsuccess = (event) => {
+        const cursor = event.target.result;
+        console.log("4 "+cursor);
+        if (cursor) {
+            if (cursor.primaryKey === parseInt(id)) {
+                const request = cursor.delete();
+                request.onsuccess = () => {
+                    console.log('A better album year?');
+                    dotNetObjRef.invokeMethod('SuccessfulNotify');
+                    db.close();
+                };
+            };
+            cursor.continue();
+        } else {
+            console.log('not.');
         }
     }
 }
@@ -193,6 +218,21 @@ window.UpdateNoteDB = async (id, jsonData, dotNetObjRef) => {
         // add implementation here
         const db = event.target.result;
         _f_3updateNote(db, id, jsonData, dotNetObjRef);
+
+    };
+}
+
+window.DeleteNoteDB = async (id, dotNetObjRef) => {
+    const request = indexedDB.open('CarNoteDB', 1);
+
+    request.onerror = (event) => {
+        console.error(`Database error: ${event.target.errorCode}`);
+    };
+
+    request.onsuccess = (event) => {
+        // add implementation here
+        const db = event.target.result;
+        _f_4DeleteNote(db, id, dotNetObjRef);
 
     };
 }

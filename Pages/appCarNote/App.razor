@@ -11,13 +11,13 @@
 <MudPaper Class="gap-4 d-flex flex-wrap" Elevation="0">
     @foreach (ReadCarNote _note in _notes)
     {
-        <MudCard Outlined="true" @onclick="@(() => GotoEdit(@_note.ID))">
+        <MudCard Outlined="true" @key=_note.ID @onclick="@(() => GotoEdit(_note.ID))">
             <MudCardContent>
                 <MudText>Story of the day @_note.title @_note.typeID</MudText>
                 <MudText Typo="Typo.body2">@_note.description, @_note.filter , @_note.startDate </MudText>
             </MudCardContent>
             <MudCardActions>
-                <MudButton Variant="Variant.Text" Color="Color.Primary">Learn More</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => Delete(@_note.ID))">Delete</MudButton>
             </MudCardActions>
         </MudCard>
     }
@@ -46,6 +46,21 @@
             }
         );
         StateHasChanged();
+    }
+    [JSInvokable]
+     public async void SuccessfulNotify()
+    {
+        @* NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true); *@
+        _notes.Clear();
+        StateHasChanged();
+        var dotNetObjRef = DotNetObjectReference.Create(this);
+        await JSRuntime.InvokeVoidAsync("ReadAllNoteDB", dotNetObjRef);
+    }
+    public async void Delete(int id)
+    {
+        @* string id = "1"; *@
+        var dotNetObjRef = DotNetObjectReference.Create(this);
+        await JSRuntime.InvokeVoidAsync("DeleteNoteDB",id,dotNetObjRef);
     }
     public void GotoEdit(int id)
     {
