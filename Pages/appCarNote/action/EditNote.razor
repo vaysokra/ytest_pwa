@@ -78,11 +78,11 @@
     protected override async Task OnInitializedAsync()
     {
         var dotNetObjRef = DotNetObjectReference.Create(this);
-        await JSRuntime.InvokeVoidAsync("FindNoteDB", id, dotNetObjRef);
+        await JSRuntime.InvokeVoidAsync("FindNoteDB", this.id, dotNetObjRef);
     }
     [Parameter]
     public string id { get; set; }
-    DateTime? date = DateTime.Today;
+    DateTime? date {get; set; }
     CarNote _carNote = new CarNote();
     @* _carNote.startDate = DateTime.Today; *@
     private bool isVisible;
@@ -95,8 +95,9 @@
         NavigationManager.NavigateTo("/appcarnote/app");
     }
     [JSInvokable]
-    public void _f_findDB_by_id(CarNote message)
+    public void _f_findDB_id(CarNote message)
     {
+        this.date = message.startDate;
         _carNote = new CarNote()
         {
             title = message.title,
@@ -111,7 +112,7 @@
     private async Task _SendDotNetInstanceToJS()
     {
         var dotNetObjRef = DotNetObjectReference.Create(this);
-        @* await JSRuntime.InvokeVoidAsync("setNote",_carNote, dotNetObjRef); *@
+        await JSRuntime.InvokeVoidAsync("UpdateNoteDB",this.id,_carNote, dotNetObjRef);
     }
 
     public void OpenOverlay()
