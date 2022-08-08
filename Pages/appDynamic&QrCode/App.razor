@@ -1,0 +1,26 @@
+@page "/DynamicAttributes"
+
+<div @attributes=MyCodeGeneratedAttributes/>
+<h2 @attributes=code>Dynamic The title Attribute</h2>
+
+<p title="I'm a tooltip">Mouse over this paragraph, to display the title attribute as a tooltip.</p>
+<MudButton @onclick="change">change</MudButton>
+@code
+{
+Dictionary<string, object> MyCodeGeneratedAttributes;
+Dictionary<string, object> code = new Dictionary<string, object>();
+  String x = "good";  
+public void change(){
+  x += "good";
+  code["title"] = x;
+StateHasChanged();
+}
+  protected override void OnInitialized()
+  {
+    MyCodeGeneratedAttributes = new Dictionary<string, object>();
+    for(int index = 1; index <= 5; index++)
+    {
+      MyCodeGeneratedAttributes["attribute_" + index] = index;
+    }
+  }
+}

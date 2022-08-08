@@ -17,7 +17,8 @@
                 <MudText Typo="Typo.body2">@_note.description, @_note.filter , @_note.startDate </MudText>
             </MudCardContent>
             <MudCardActions>
-                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => Delete(@_note.ID))">Delete</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => Delete(@_note.ID))">Delete
+                </MudButton>
             </MudCardActions>
         </MudCard>
     }
@@ -33,22 +34,23 @@
     List<ReadCarNote> _notes = new List<ReadCarNote>();
     CarNote _note = new CarNote();
     [JSInvokable]
-    public void _f_readAll(int id,CarNote message)
+    public void _f_readAll(int id, CarNote message)
     {
         _notes.Add(
-            new ReadCarNote(){
-                ID = id,
-                title = message.title,
-                typeID = message.typeID,
-                description = message.description,
-                filter = message.filter,
-                startDate = message.startDate,
-            }
+        new ReadCarNote()
+        {
+            ID = id,
+            title = message.title,
+            typeID = message.typeID,
+            description = message.description,
+            filter = message.filter,
+            startDate = message.startDate,
+        }
         );
         StateHasChanged();
     }
     [JSInvokable]
-     public async void SuccessfulNotify()
+    public async void SuccessfulNotify()
     {
         @* NavigationManager.NavigateTo(NavigationManager.Uri, forceLoad: true); *@
         _notes.Clear();
@@ -60,12 +62,12 @@
     {
         @* string id = "1"; *@
         var dotNetObjRef = DotNetObjectReference.Create(this);
-        await JSRuntime.InvokeVoidAsync("DeleteNoteDB",id,dotNetObjRef);
+        await JSRuntime.InvokeVoidAsync("DeleteNoteDB", id, dotNetObjRef);
     }
     public void GotoEdit(int id)
     {
         @* string id = "1"; *@
-        NavigationManager.NavigateTo("/appcarnote/editNote/"+id);
+        NavigationManager.NavigateTo("/appcarnote/editNote/" + id);
     }
     public void readData()
     {
